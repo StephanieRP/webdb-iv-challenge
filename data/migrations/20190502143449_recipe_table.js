@@ -12,6 +12,8 @@ exports.up = function(knex, Promise) {
       .inTable("dish")
       .onDelete("RESTRICT")
       .onUpdate("CASCADE");
+
+    table.string("recipe_name", 128).notNullable();
   });
 };
 

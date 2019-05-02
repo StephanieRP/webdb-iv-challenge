@@ -4,9 +4,9 @@ const db = require("../../data/dbConfig.js");
 module.exports = {
   getDishes,
   getDish,
-  addDish
-  //   getRecipes,
-  //   addRecipe
+  addDish,
+  getRecipes,
+  addRecipe
 };
 
 function getDishes() {
@@ -15,13 +15,17 @@ function getDishes() {
 
 function getDish(id) {
   return db("dish")
-    .where({ id })
+    .select(
+      "dish.id as dish_id",
+      "dish.name as dish_name",
+      "recipe.recipe_name as recipe_name"
+    )
+    .where({ "recipe.dish_id": id })
+    .join("recipe", "dish.id", "recipe.dish_id")
     .first();
 }
 
 function addDish(dish) {
-  // passing 'id' as the second parameter is recommended to ensure the id is returned
-  // when connecting to other database management systems like Postgres
   return db("dish")
     .insert(dish, "id")
     .then(([id]) => {
@@ -29,4 +33,12 @@ function addDish(dish) {
     });
 }
 
-// function getRecipes() {}
+function getRecipes() {
+  return db("recipe")
+    .select("recipe.id as id", "dish.name as dish_name")
+    .join("dish", "dish.id", "recipe.dish_id");
+}
+
+function addRecipe(recipe) {
+  return db("recipe").insert(recipe);
+}
